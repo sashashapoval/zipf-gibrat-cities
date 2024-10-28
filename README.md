@@ -6,5 +6,8 @@ __Files__:
 * citymaker.py : file with Python codes
 
 __Folder__:
-* data with
+* __data__ with
   * SUB-IP-EST2022-POP.csv : file with the U.S. Census data
+ 
+__Output__
+* model rank distributions are saved to folder __data__
