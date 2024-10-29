@@ -51,7 +51,7 @@ def weibull_left_hand_side(x, k, loc=0, scale=1, M=1, mass=1):
         np.sqrt(weibullpdf(np.array(x), k, loc=loc, scale=scale, M=M) / (2*mass))
 
 import matplotlib.pyplot as plt
-def plot_weibull_lhs(loc, scale, k, M, mass):
+def plot_weibull_lhs(loc, scale, k, M, mass=1):
     fig, ax = plt.subplots(1, 1, figsize=(5,3))
     y = np.linspace(np.log10(0.01), np.log10(M), 1000)
     x = np.exp(y*np.log(10))
@@ -148,6 +148,27 @@ def preprocess_census_full(df):
         'value2020': [(str(v).replace(',','')) for v in df['2020']]
     }) #.sort_values(by='value').reset_index(drop=True)
     dfcensus = dfcensus.astype({'name': 'str', 'value2021': 'int', 'value2020': 'int'})
+    up_pop = dfcensus['value2021'].sum()
+    dfcensus['pdf21'] = [v / up_pop for v in dfcensus['value2021']]
+    dfcensus['rank'] = len(dfcensus['value2021']) - rankdata(dfcensus['value2021']) + 1
+    dfcensus = dfcensus.sort_values(by='rank').reset_index(drop=True)
+    return dfcensus
+
+#transform initial (alphabetical) database
+#deleting '.' that separates the last 3 digits in integers
+#converting each value from string to integer
+#and sorting accoding to values in 2021
+from scipy.stats import rankdata
+import pandas as pd
+def preprocess_census_full_xslx(df):
+    df = df.rename(columns={'Unnamed: 0':'Area', 'Unnamed: 1':'Base', 2020:'2020', 2021:'2021'}).dropna()#columns titles are taken as they are in the input
+    dfcensus = pd.DataFrame({
+        'name': df['Area'],
+        'value2021': [int(v) for v in df['2021']],
+        'value2020': [int(v) for v in df['2020']]
+    }) 
+    dfcensus = dfcensus.astype({'name': 'str', 'value2021': 'int', 'value2020': 'int'})#columns are declared as str and int in line with the content
+    #---create new columns: pdf and rand
     up_pop = dfcensus['value2021'].sum()
     dfcensus['pdf21'] = [v / up_pop for v in dfcensus['value2021']]
     dfcensus['rank'] = len(dfcensus['value2021']) - rankdata(dfcensus['value2021']) + 1

@@ -11,3 +11,8 @@ __Folder__:
  
 __Output__
 * model rank distributions are saved to folder __data__
+
+__Usage__
+* Download the files to the local computer conserving the folder structure
+* Open .ipynb file and run it cell-by-cell
+* Enjoy
